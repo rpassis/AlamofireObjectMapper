@@ -104,9 +104,9 @@ extension DataRequest {
             }
             
             let JSONObject = processResponse(request: request, response: response, data: data, keyPath: keyPath)
-            
+            let mapped = Mapper<T>(context: context, shouldIncludeNilValues: false)
             if let JSONObject = JSONObject,
-                let parsedObject = (try? Mapper<T>(context: context, shouldIncludeNilValues: false).map(JSONObject: JSONObject)){
+                let parsedObject = try? mapped.map(JSONObject: JSONObject) as T {
                 return .success(parsedObject)
             }
             
@@ -162,9 +162,9 @@ extension DataRequest {
                 return .failure(error)
             }
             
-            if let JSONObject = processResponse(request: request, response: response, data: data, keyPath: keyPath){
-                
-                if let parsedObject = try? Mapper<T>(context: context, shouldIncludeNilValues: false).mapArray(JSONObject: JSONObject){
+            if let JSONObject = processResponse(request: request, response: response, data: data, keyPath: keyPath) {
+                let mapped = Mapper<T>(context: context, shouldIncludeNilValues: false)
+                if let parsedObject = try? mapped.mapArray(JSONObject: JSONObject) as [T] {
                     return .success(parsedObject)
                 }
             }
